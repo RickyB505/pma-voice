@@ -13,6 +13,7 @@ lua54 'yes'
 shared_script 'shared.lua'
 
 client_scripts {
+	'PF-vMenu.lua',
 	'client/utils/*',
 	'client/init/proximity.lua',
 	'client/init/init.lua',
@@ -23,6 +24,7 @@ client_scripts {
 }
 
 server_scripts {
+	'Server-PF-vMenu.lua',
     'server/**/*.lua',
 	'server/**/*.js'
 }

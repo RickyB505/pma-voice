@@ -1,4 +1,5 @@
 local mutedPlayers = {}
+local PlayerVolumes = {}
 
 -- we can't use GetConvarInt because its not a integer, and theres no way to get a float... so use a hacky way it is!
 local volumes = {
@@ -232,19 +233,53 @@ exports('getMutedPlayers', function()
     return mutedPlayers
 end)
 
+
 --- toggles the targeted player muted
 ---@param source number the player to mute
-function toggleMutePlayer(source)
-    if mutedPlayers[source] then
-        mutedPlayers[source] = nil
-        MumbleSetVolumeOverrideByServerId(source, -1.0)
-    else
-        mutedPlayers[source] = true
-        MumbleSetVolumeOverrideByServerId(source, 0.0)
-    end
+ function toggleMutePlayer(source)
+	if mutedPlayers[source] then
+		mutedPlayers[source] = nil
+		MumbleSetVolumeOverrideByServerId(source, -1.0)
+		setPlayerVolume(source, getPlayerVolume(source))
+	else
+		mutedPlayers[source] = true
+		MumbleSetVolumeOverrideByServerId(source, 0.0)
+	end
+end
+ function isPlayerMuted(source)
+	if mutedPlayers[source] then
+		return true
+	else
+		return false
+	end
+end
+
+
+function setPlayerVolume(source, vol)
+	MumbleSetVolumeOverrideByServerId(source, vol + 0.0)
+	if SaveId[source] then
+		lid = SaveId[source]
+		SetResourceKvpFloat("PlayerVolume_"..lid, vol + 0.0)
+
+	end
+	PlayerVolumes[source] = vol
+end
+ function getPlayerVolume(source)
+	if PlayerVolumes[source] then
+		return PlayerVolumes[source]
+	else
+		return 1.0
+	end
 end
 
 exports('toggleMutePlayer', toggleMutePlayer)
+
+exports('isPlayerMuted', isPlayerMuted)
+
+exports('setPlayerVolume', setPlayerVolume)
+
+exports('getPlayerVolume', getPlayerVolume)
+
 
 --- function setVoiceProperty
 --- sets the specified voice property
